@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CognitiveClipper</title>
+    <link rel="stylesheet" href="css/LiveDemoStyles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">CognitiveClipper</div>
+        <nav>
+            <ul>
+                <li>GitHub</li>
+                <li>Docs</li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="content-section">
+            <div class="left-section">
+                <h1>CognitiveClipper: A New Era of Video Consumption</h1>
+                <p>In today's world, where information is abundant and video content is king, keeping up can be daunting. Imagine having a personal AI assistant that not only condenses long videos into brief, insightful summaries but also answers your questions about the content, even those that aren't directly addressed. This is the essence of the Personalized Video Summarization and Q&A Bot.</p>
+                <h2>Harnessing the Power of AI:</h2>
+                <p>This innovative tool combines several advanced technologies. AssemblyAI transcribes spoken words into text. Pinecone, a robust vector database, stores the video's semantic essence, enabling quick searches for relevant information. Additionally, Google's Generative AI helps generate refined content and answers based on the data.</p>
+            </div>
+            <div class="right-section">
+                <div class="video-container">
+                    <video autoplay muted loop>
+                        <source src="/image/gpt4all_demo.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
+        <section class="above-section">
+            <div class="block-above-section">
+                <div class="image-container">
+                    <img src="image/illu_branch.png" alt="Person on a tree with a laptop">
+                </div>
+                <div class="text-container">
+                    <div class="badge">
+                        <div id="message" class="message"></div>
+                        <img src="image/fishsticks.png" width="20px" height="20px" alt="Badge" onclick="toggleOption()">
+                        <div class="search-box">
+                            <input type="text" id="participants" class="form-control" placeholder="https://www.youtube.com...">
+                        </div>
+                    </div>
+                    <div class="result">
+                        <p>
+                            At its core, this system represents a paradigm shift in AI technology. Unlike traditional static models, 
+                            it thrives on continuous learning and adaptation. Imagine an AI that evolves with each interaction, 
+                            learning from your preferences, context, and the information you provide. As you engage, it refines 
+                            its understanding, creating a dynamic knowledge base that adapts over time. The magic lies in 
+                            personalization—it tailors its responses to you, considering your unique knowledge base. 
+                            Whether you’re discussing Python, Next.js, or GPT-40, it aligns its output to your expertise 
+                            level. It’s like having a knowledgeable friend who knows exactly what you need. But it’s not 
+                            just about facts; it’s about weaving your knowledge into the conversation fabric. Efficiency 
+                            meets relevance as it optimizes its output, avoiding redundancy. Whether you seek technical 
+                            details or creative ideas, it distills information to what matters most. And the dialogue? 
+                            It flows effortlessly. Its intuitive interaction mimics human discourse, adapting its tone 
+                            to make every exchange engaging. So, as we explore further, remember that it’s not just 
+                            about algorithms—it’s about creating a meaningful connection. 😊
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+    </main>
+    <script src="js/scripts.js"></script>
+</body>
+</html>

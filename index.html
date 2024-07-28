@@ -1,91 +1,73 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CognitiveClipper</title>
-    <link rel="stylesheet" href="css/CognitiveClipperStyles.css">
+    <link rel="stylesheet" href="css/LiveDemoStyles.css">
 </head>
-<body id="top" class="theme-particles">
-    <section class="wrapper">
-        <div id="stars"></div>
-        <div id="stars2"></div>
-        <div id="stars3"></div>
-        
-        <section id="intro" class="s-intro">
-            <div class="s-intro__bg"></div>
-            <div class="row s-intro__content">
-                <div class="column lg-12">
-                    <div id="countdown">
-                        <div class="counter">
-                            <div class="counter__time">
-                                <span class="ss-days" id="days"></span>
-                                <span>days</span>
-                            </div>
-                            <div class="counter__time">
-                                <span class="ss-hours" id="hours"></span>
-                                <span>hours</span>
-                            </div>
-                            <div class="counter__time minutes">
-                                <span class="ss-minutes" id="minutes"></span>
-                                <span>mins</span>
-                            </div>
-                            <div class="counter__time">
-                                <span class="ss-seconds" id="seconds"></span>
-                                <span>secs</span>
-                            </div>
-                        </div> 
+<body>
+    <header>
+        <div class="logo">CognitiveClipper</div>
+        <nav>
+            <ul>
+                <li>GitHub</li>
+                <li>Docs</li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="content-section">
+            <div class="left-section">
+                <h1>CognitiveClipper: A New Era of Video Consumption</h1>
+                <p>In today's world, where information is abundant and video content is king, keeping up can be daunting. Imagine having a personal AI assistant that not only condenses long videos into brief, insightful summaries but also answers your questions about the content, even those that aren't directly addressed. This is the essence of the Personalized Video Summarization and Q&A Bot.</p>
+                <h2>Harnessing the Power of AI:</h2>
+                <p>This innovative tool combines several advanced technologies. AssemblyAI transcribes spoken words into text. Pinecone, a robust vector database, stores the video's semantic essence, enabling quick searches for relevant information. Additionally, Google's Generative AI helps generate refined content and answers based on the data.</p>
+            </div>
+            <div class="right-section">
+                <div class="video-container">
+                    <video autoplay muted loop>
+                        <source src="/image/gpt4all_demo.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
+        <section class="above-section">
+            <div class="block-above-section">
+                <div class="image-container">
+                    <img src="image/illu_branch.png" alt="Person on a tree with a laptop">
+                </div>
+                <div class="text-container">
+                    <div class="badge">
+                        <div id="message" class="message"></div>
+                        <img src="image/fishsticks.png" width="20px" height="20px" alt="Badge" onclick="toggleOption()">
+                        <div class="search-box">
+                            <input type="text" id="participants" class="form-control" placeholder="https://www.youtube.com...">
+                        </div>
                     </div>
-                    <div class="s-intro__content-bottom">
-                        <h1 id="launching-soon" class="s-intro__content-title">CognitiveClipper is launching soon.</h1>
-                        <a href="/LiveDemo.html">Live Demo</a> With Source Code <a href="https://github.com/AnamolZ/CognitiveClipper">Github</a><br>
+                    <div class="result">
                         <p>
-                            Introducing an innovative AI-powered bot designed to <br>
-                            summarize videos into concise summaries and answer questions <br>
-                            about their content. Thanks To <a href="https://backdropbuild.com/builds/v5/cognitiveclipper">Backdrop Build</a>
+                            At its core, this system represents a paradigm shift in AI technology. Unlike traditional static models, 
+                            it thrives on continuous learning and adaptation. Imagine an AI that evolves with each interaction, 
+                            learning from your preferences, context, and the information you provide. As you engage, it refines 
+                            its understanding, creating a dynamic knowledge base that adapts over time. The magic lies in 
+                            personalization—it tailors its responses to you, considering your unique knowledge base. 
+                            Whether you’re discussing Python, Next.js, or GPT-40, it aligns its output to your expertise 
+                            level. It’s like having a knowledgeable friend who knows exactly what you need. But it’s not 
+                            just about facts; it’s about weaving your knowledge into the conversation fabric. Efficiency 
+                            meets relevance as it optimizes its output, avoiding redundancy. Whether you seek technical 
+                            details or creative ideas, it distills information to what matters most. And the dialogue? 
+                            It flows effortlessly. Its intuitive interaction mimics human discourse, adapting its tone 
+                            to make every exchange engaging. So, as we explore further, remember that it’s not just 
+                            about algorithms—it’s about creating a meaningful connection. 😊
                         </p>
                     </div>
                 </div>
-            </div> 
+                
+            </div>
         </section>
-    </section>
-    <script>
-        function countdown(endDate) {
-            let days, hours, minutes, seconds;
-            endDate = new Date(endDate).getTime();
-            if (isNaN(endDate)) return;
-
-            setInterval(calculate, 1000);
-
-            function calculate() {
-                let startDate = new Date().getTime();
-                let timeRemaining = parseInt((endDate - startDate) / 1000);
-
-                if (timeRemaining >= 0) {
-                    days = parseInt(timeRemaining / 86400);
-                    timeRemaining = timeRemaining % 86400;
-
-                    hours = parseInt(timeRemaining / 3600);
-                    timeRemaining = timeRemaining % 3600;
-
-                    minutes = parseInt(timeRemaining / 60);
-                    seconds = parseInt(timeRemaining % 60);
-
-                    document.getElementById("days").innerHTML = parseInt(days, 10);
-                    document.getElementById("hours").innerHTML = ("0" + hours).slice(-2);
-                    document.getElementById("minutes").innerHTML = ("0" + minutes).slice(-2);
-                    document.getElementById("seconds").innerHTML = ("0" + seconds).slice(-2);
-                } else {
-                    document.getElementById("countdown").innerHTML = "<h1>CognitiveClipper's Live Now</h1>";
-                    document.getElementById("launching-soon").style.display = "none";
-                    return;
-                }
-            }
-        }
-
-        (function () {
-            countdown('07/29/2024 12:00:00 AM');
-        }());
-    </script>
+    </main>
+    <script src="js/scripts.js"></script>
 </body>
 </html>

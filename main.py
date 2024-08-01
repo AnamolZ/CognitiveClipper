@@ -1,52 +1,32 @@
-import requests
-import time
 import os
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 from rich import print
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
-from youtube_transcript_api import YouTubeTranscriptApi
+import yt_dlp
+import assemblyai as aai
 from numpy import dot
 from numpy.linalg import norm
 
-class AudioTranscription:
-    def __init__(self, apiKey):
-        self.apiKey = apiKey
+load_dotenv()
 
-    def transcribeAudio(self, audioPath):
-        if not os.path.exists(audioPath):
-            raise FileNotFoundError(f"Audio file {audioPath} not found.")
-        uploadUrl = self.uploadAudio(audioPath)
-        transcriptionId = self.requestTranscription(uploadUrl)
-        return self.pollForTranscription(transcriptionId)
+class ProcessRequest(BaseModel):
+    action: str
+    input: str
 
-    def uploadAudio(self, audioPath):
-        endpoint = 'https://api.assemblyai.com/v2/upload'
-        with open(audioPath, 'rb') as file:
-            response = requests.post(endpoint, headers={'authorization': self.apiKey}, files={'file': file})
-        response.raise_forStatus()
-        return response.json()['upload_url']
+app = FastAPI()
 
-    def requestTranscription(self, uploadUrl):
-        endpoint = 'https://api.assemblyai.com/v2/transcript'
-        payload = {'audio_url': uploadUrl}
-        response = requests.post(endpoint, json=payload, headers={'authorization': self.apiKey})
-        response.raise_forStatus()
-        return response.json()['id']
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
-    def pollForTranscription(self, transcriptionId):
-        endpoint = f'https://api.assemblyai.com/v2/transcript/{transcriptionId}'
-        maxWaitTime = 600
-        startTime = time.time()
-        while time.time() - startTime < maxWaitTime:
-            response = requests.get(endpoint, headers={'authorization': self.apiKey})
-            responseData = response.json()
-            if responseData['status'] == 'completed':
-                return responseData['text']
-            if responseData['status'] == 'error':
-                raise Exception(f"Transcription failed: {responseData.get('error', 'Unknown error')}")
-            time.sleep(5)
-        raise TimeoutError('Transcription timed out')
+api_key = os.getenv("ASSEMBLYAI_API_KEY")
+genaiApiKey = os.getenv("GENAI_API_KEY")
+modelName = "multi-qa-mpnet-base-dot-v1"
 
 class QABot:
     def __init__(self, model):
@@ -84,53 +64,84 @@ class GenaiQA:
         genai.configure(api_key=genaiApiKey)
         self.genaiModel = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
-    def interactiveQA(self, audioPath, transcriptionText):
+    def getSummary(self, transcriptionText):
         if not transcriptionText:
-            videoId = "FZieYYj0ImE"
-            transcriptionText = self.getTranscript(videoId)
-            if transcriptionText.startswith("Error:"):
-                print("Unsupported right now.")
-                return
+            return "No transcription text provided."
 
         inputUser = (f"This document contains a transcription of the video's audio. Please just provide a professionally crafted summary based on the transcript paragraph. Transcription: {transcriptionText}")
         response = self.genaiModel.generate_content(inputUser)
-        print(response.text)
+        return response.text
 
-        localData = [transcriptionText]
+    def getAnswer(self, query, localData):
         qaBot = QABot(self.model)
-        while True:
-            query = input("Ask: ").strip()
-            if query.lower() == 'exit':
-                break
-            answer = qaBot.answerQuery(query, localData)
-            inputUser = f"For this question, I'm seeking the perfect answer. Please provide the answer directly. {query}\n\n{answer}"
-            response = self.genaiModel.generate_content(inputUser)
-            print(response.text)
+        answer = qaBot.answerQuery(query, localData)
+        inputUser = f"For this question, I'm seeking the perfect answer. Please provide the answer directly. {query}\n\n{answer}"
+        response = self.genaiModel.generate_content(inputUser)
+        return response.text
 
-    def getTranscript(self, videoId):
+class YouTubeTranscriber:
+    def __init__(self, api_key, url):
+        self.api_key = api_key
+        self.url = url
+        self.ydl_opts = {
+            'outtmpl': 'video.%(ext)s',
+            'format': 'bestaudio/best',
+            'noplaylist': True,
+            'merge_output_format': None,
+        }
+        aai.settings.api_key = self.api_key
+
+    def remove_existing_video(self, filename):
+        if os.path.exists(filename):
+            os.remove(filename)
+
+    def download_video(self):
         try:
-            transcript = YouTubeTranscriptApi.get_transcript(videoId)
-            return " ".join(item['text'] for item in transcript)
+            self.remove_existing_video('video.mp4')
+            with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
+                ydl.download([self.url])
+            print("Download completed successfully!")
         except Exception as e:
-            return f"Error: {e}"
+            print(f"An error occurred: {e}")
 
-def main():
-    load_dotenv()
-    assemblyaiApiKey = os.getenv("ASSEMBLYAI_API_KEY")
-    genaiApiKey = os.getenv("GENAI_API_KEY")
-    audioPath = 'audio.mp3'
-    modelName = "multi-qa-mpnet-base-dot-v1"
+    def transcribe_video(self, filename):
+        if not os.path.exists(filename):
+            print(f"File {filename} not found.")
+            return ""
+        transcriber = aai.Transcriber()
+        transcript = transcriber.transcribe(filename)
+        return transcript.text
 
-    audioTranscription = AudioTranscription(assemblyaiApiKey)
-    transcriptionText = None
-    if audioPath:
-        try:
-            transcriptionText = audioTranscription.transcribeAudio(audioPath)
-        except Exception as e:
-            print(f"Audio transcription error: {e}")
+@app.post("/process")
+async def process_request(request: ProcessRequest):
+    action = request.action
+    input_text = request.input
 
-    genaiQA = GenaiQA(modelName, genaiApiKey)
-    genaiQA.interactiveQA(audioPath, transcriptionText)
+    if action == "transcribe":
+        yt_transcriber = YouTubeTranscriber(api_key, input_text)
+        yt_transcriber.download_video()
+        transcript_text = yt_transcriber.transcribe_video("video.m4a")
+        if not transcript_text:
+            raise HTTPException(status_code=500, detail="Transcription failed.")
+        
+        genaiQA = GenaiQA(modelName, genaiApiKey)
+        summary_text = genaiQA.getSummary(transcript_text)
+        
+        return JSONResponse(content={"status": "success", "summary": summary_text})
+
+    elif action == "ask":
+        genaiQA = GenaiQA(modelName, genaiApiKey)
+        answer_text = genaiQA.getAnswer(input_text, [input_text])
+        
+        return JSONResponse(content={"status": "success", "answer": answer_text})
+
+    else:
+        raise HTTPException(status_code=400, detail="Invalid action.")
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

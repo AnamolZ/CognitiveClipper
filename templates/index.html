@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CognitiveClipper</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body class="flex h-full flex-col text-base">
+    <header>
+        <div class="logo">
+            <a href="./index.html">CognitiveClipper</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="https://github.com/AnamolZ/CognitiveClipper">GitHub</a></li>
+                <li><a href="../templates/documentation.html">Docs</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div id="__next">
+        <div class="container">
+            <main>
+                <section id="hero" class="relative px-6 lg:px-8">
+                    <div class="background-pattern">
+                        <svg class="pattern-svg" aria-hidden="true">
+                            <defs>
+                                <pattern id="pattern" width="200" height="200" x="50%" y="50%" patternUnits="userSpaceOnUse">
+                                    <path d="M.5 200V.5H200" fill="none"></path>
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#pattern)"></rect>
+                        </svg>
+                    </div>
+                    <div class="hero-content">
+                        <div class="text-center">
+                            <h1 class="hero-title">Watch less, learn more and fast from long videos</h1>
+                            <p class="hero-description">Get YouTube video summaries in a minute. Just paste the link below.</p>
+                            <div class="input-container">
+                                <label class="input-label" for="prompt">
+                                    <input id="prompt" name="prompt" type="text" placeholder="Enter YouTube video link here..." class="input-field">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="summary-section">
+                    <div class="summary-container">
+                        <div class="summary-content">
+                            <div class="video-placeholder" id="videoPlaceholder">
+                                <iframe width="100%" height="390" style="border-radius: 5px;" src="https://www.youtube.com/embed/x7X9w_GIm1s?start=45" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="chat-container" id="chatContainer">
+                            <div class="chat-title">AI Chat</div>
+                            <div class="chat-box" id="chatBox">
+                                <ul class="takeaways-list">
+                                    <li>OpenAI aims to restrict harmful uses of AI like misinformation while enabling beneficial ones.</li>
+                                    <li>Demand for AI compute power will drive breakthroughs in fusion, solar and energy storage.</li>
+                                    <li>AI will augment and enhance human productivity more than replace jobs.</li>
+                                    <li>OpenAI seeks partnerships with news publishers to properly attribute content.</li>
+                                    <li>Advanced AI may discover new scientific knowledge and even do AI research.</li>
+                                    <li>Regulating AI risks stifling entrepreneurial innovation.</li>
+                                    <li>AI progress will likely continue at an exponential, continuous pace.</li>
+                                    <li>AI safety standards and best practices still need development.</li>
+                                    <li>Well-designed AI can make technology feel more human-compatible.</li>
+                                    <li>Preparing for transformative AI requires humility about the future.</li>
+                                </ul>
+                            </div>
+                            <div class="chat-box-1" id="chatBox-1"></div>
+                            <div class="chat-input-container">
+                                <input id="chatInput" type="text" class="chat-input" placeholder="Type your message...">
+                                <button id="chatSubmitButton" class="chat-submit-button">Ask</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="info-section">
+                    <div class="info-container">
+                        <p class="info-title">Enhancing your learning experience when you’re overwhelmed with content.</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../static/js/script.js"></script>
+</body>
+</html>

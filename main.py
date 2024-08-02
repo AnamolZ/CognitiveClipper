@@ -97,7 +97,7 @@ class YouTubeTranscriber:
 
     def download_video(self):
         try:
-            self.remove_existing_video('video.mp4')
+            self.remove_existing_video('video.m4a')
             with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
                 ydl.download([self.url])
             print("Download completed successfully!")
@@ -114,9 +114,11 @@ class YouTubeTranscriber:
 
 @app.post("/process")
 async def process_request(request: ProcessRequest):
-    os.remove("video.m4a")
     action = request.action
     input_text = request.input
+
+    if os.path.exists('video.m4a'):
+        os.remove('video.m4a')
 
     if action == "transcribe":
         yt_transcriber = YouTubeTranscriber(api_key, input_text)
@@ -127,11 +129,13 @@ async def process_request(request: ProcessRequest):
         
         genaiQA = GenaiQA(modelName, genaiApiKey)
         summary_text = genaiQA.getSummary(transcript_text)
+        
         return JSONResponse(content={"status": "success", "summary": summary_text})
 
     elif action == "ask":
         genaiQA = GenaiQA(modelName, genaiApiKey)
         answer_text = genaiQA.getAnswer(input_text, [input_text])
+        
         return JSONResponse(content={"status": "success", "answer": answer_text})
 
     else:

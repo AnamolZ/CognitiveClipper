@@ -126,13 +126,13 @@ async def process_request(request: ProcessRequest):
         
         genaiQA = GenaiQA(modelName, genaiApiKey)
         summary_text = genaiQA.getSummary(transcript_text)
-        
+        os.remove("video.m4a")
         return JSONResponse(content={"status": "success", "summary": summary_text})
 
     elif action == "ask":
         genaiQA = GenaiQA(modelName, genaiApiKey)
         answer_text = genaiQA.getAnswer(input_text, [input_text])
-        
+        os.remove("video.m4a")
         return JSONResponse(content={"status": "success", "answer": answer_text})
 
     else:

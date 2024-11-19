@@ -1,8 +1,11 @@
-import yt_dlp
 import os
+import yt_dlp
+import assemblyai as aai
+from rich import print
 
-class YouTubeDownloader:
-    def __init__(self, url):
+class YouTubeService:
+    def __init__(self, api_key, url):
+        self.api_key = api_key
         self.url = url
         self.ydl_opts = {
             'outtmpl': 'video.%(ext)s',
@@ -10,6 +13,7 @@ class YouTubeDownloader:
             'noplaylist': True,
             'merge_output_format': None,
         }
+        aai.settings.api_key = self.api_key
 
     def remove_existing_video(self, filename):
         if os.path.exists(filename):
@@ -18,8 +22,4 @@ class YouTubeDownloader:
     def download_video(self):
         try:
             self.remove_existing_video('video.m4a')
-            with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
-                ydl.download([self.url])
-            print("Download completed successfully!")
-        except Exception as e:
-            print(f"An error occurred: {e}")
+            with yt

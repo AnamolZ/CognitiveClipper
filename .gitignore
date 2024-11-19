@@ -1,3 +1,15 @@
-.env
-venv/
+# Python bytecode files
 __pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# .env file (contains sensitive API keys)
+.env
+
+# Docker-related files
+docker-compose.override.yml
+*.log
